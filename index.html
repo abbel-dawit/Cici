@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CiCi - Love Letters</title>
+<meta name="description" content="Send heartfelt letters to the people you love. CiCi makes sharing love beautiful.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #FF1493;
+    --pink-light: #FF69B4;
+    --pink-pale: #FFE4F0;
+    --pink-ultra: #FFF0F7;
+    --white: #FFFFFF;
+    --gray: #888;
+    --shadow: 0 8px 40px rgba(255,20,147,0.15);
+    --shadow-strong: 0 16px 60px rgba(255,20,147,0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Quicksand', sans-serif;
+    background: var(--pink-ultra);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  /* ── FLOATING HEARTS ── */
+  .hearts-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .heart-particle {
+    position: absolute; font-size: 1.2rem; opacity: 0.12;
+    animation: floatHeart linear infinite;
+  }
+  @keyframes floatHeart {
+    0%   { transform: translateY(100vh) rotate(0deg);   opacity: 0; }
+    10%  { opacity: 0.12; }
+    90%  { opacity: 0.12; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--white);
+    border-bottom: 3px solid var(--pink-pale);
+    padding: 0 16px; height: 56px;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    box-shadow: 0 2px 20px rgba(255,20,147,0.1);
+  }
+  .logo {
+    font-family: 'Caveat', cursive; font-size: 1.5rem; font-weight: 700;
+    color: var(--pink); display: flex; align-items: center; gap: 4px;
+    line-height: 1; flex-shrink: 0;
+  }
+  .header-tagline {
+    font-size: 0.72rem; color: var(--pink-light); font-weight: 600;
+    letter-spacing: 0.8px; text-transform: uppercase;
+    flex: 1; text-align: center;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+  }
+  #mute-btn {
+    background: var(--pink-pale); border: 2px solid var(--pink-light);
+    border-radius: 50%; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; padding: 0;
+  }
+  #mute-btn:hover { background: var(--pink); border-color: var(--pink); transform: scale(1.08); }
+  #mute-btn svg { width: 18px; height: 18px; display: block; stroke: var(--pink); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  #mute-btn:hover svg { stroke: white; }
+  #mute-btn.muted { background: #f5f5f5; border-color: #ddd; }
+  #mute-btn.muted svg { stroke: #aaa; }
+  #mute-btn .icon-on  { display: block; }
+  #mute-btn .icon-off { display: none; }
+  #mute-btn.muted .icon-on  { display: none; }
+  #mute-btn.muted .icon-off { display: block; }
+
+  /* ── FOOTER ── */
+  footer {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+    background: var(--white); border-top: 3px solid var(--pink-pale);
+    padding: 8px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    box-shadow: 0 -2px 20px rgba(255,20,147,0.1);
+    flex-wrap: wrap; min-height: 52px;
+  }
+  .footer-copy { font-size: 0.72rem; color: var(--pink-light); font-weight: 600; white-space: nowrap; }
+  .footer-socials { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .footer-socials a {
+    display: flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 7px;
+    background: var(--pink-pale); border: 1.5px solid transparent;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    color: var(--pink); text-decoration: none;
+  }
+  .footer-socials a:hover { background: var(--pink); border-color: var(--pink); color: white; transform: translateY(-2px); }
+  .footer-socials svg {
+    width: 15px; height: 15px; display: block;
+    fill: none; stroke: currentColor; stroke-width: 2;
+    stroke-linecap: round; stroke-linejoin: round; overflow: visible;
+  }
+  .footer-socials svg .dot { fill: currentColor; stroke: none; }
+
+  /* ── MAIN ── */
+  main {
+    flex: 1; display: flex; align-items: flex-start; justify-content: center;
+    padding: 68px 16px 68px; position: relative; z-index: 1; min-height: 100vh;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white); border-radius: 28px; padding: 32px 28px;
+    width: 100%; max-width: 520px;
+    box-shadow: var(--shadow-strong); border: 2px solid var(--pink-pale);
+    position: relative;
+    animation: cardIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0)    scale(1);    }
+  }
+  .card-corner { position: absolute; top: 14px; right: 18px; font-size: 1.5rem; opacity: 0.5; }
+
+  /* ── STEP DOTS ── */
+  .steps { display: flex; gap: 8px; margin-bottom: 24px; justify-content: center; }
+  .step-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--pink-pale); border: 2px solid var(--pink-light);
+    transition: all 0.3s ease;
+  }
+  .step-dot.active { background: var(--pink); border-color: var(--pink); transform: scale(1.3); }
+  .step-dot.done   { background: var(--pink-light); border-color: var(--pink-light); }
+
+  /* ── TYPOGRAPHY ── */
+  .card h2 { font-family: 'Caveat', cursive; font-size: 1.85rem; color: var(--pink); margin-bottom: 4px; }
+  .card p.subtitle { font-size: 0.85rem; color: var(--gray); margin-bottom: 20px; font-weight: 500; }
+
+  /* ── INPUTS ── */
+  .input-group { margin-bottom: 16px; }
+  .input-group label {
+    display: block; font-size: 0.78rem; font-weight: 700;
+    color: var(--pink); margin-bottom: 5px;
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+  .input-group input {
+    width: 100%; border: 2.5px solid var(--pink-pale); border-radius: 14px;
+    padding: 12px 16px; font-family: 'Quicksand', sans-serif;
+    font-size: 1rem; font-weight: 600; color: #333;
+    background: var(--pink-ultra); transition: all 0.25s ease; outline: none;
+  }
+  .input-group input:focus { border-color: var(--pink); background: white; box-shadow: 0 0 0 4px rgba(255,20,147,0.1); }
+  .input-group input::placeholder { color: #ccc; font-weight: 400; }
+
+  /* ── LETTER PAPER ── */
+  .letter-paper {
+    border-radius: 14px; padding: 16px 16px 16px 52px;
+    border: 2.5px solid var(--pink-pale); margin-bottom: 18px;
+    position: relative; backdrop-filter: blur(4px);
+    background-color: rgba(255,255,255,0.55);
+    background-image: repeating-linear-gradient(
+      transparent, transparent 31px,
+      rgba(255,105,180,0.2) 31px, rgba(255,105,180,0.2) 32px
+    );
+    background-attachment: local;
+  }
+  .letter-paper::before {
+    content: ''; position: absolute; left: 38px; top: 0; bottom: 0;
+    width: 2px; background: rgba(255,20,147,0.18); pointer-events: none;
+  }
+  .letter-paper textarea {
+    width: 100%; background: transparent; border: none; outline: none;
+    line-height: 32px; font-family: 'Caveat', cursive; font-size: 1.2rem;
+    min-height: 200px; color: #333; resize: none; padding: 0;
+  }
+  .letter-paper textarea::placeholder { color: rgba(255,105,180,0.35); font-style: italic; }
+  .letter-date { font-family: 'Caveat', cursive; font-size: 0.95rem; color: var(--pink-light); margin-bottom: 8px; display: block; text-align: right; padding-right: 4px; }
+
+  /* ── STAMPS ── */
+  .stamp-scroll-wrap {
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    margin-bottom: 16px; padding-bottom: 6px;
+    scrollbar-width: thin; scrollbar-color: var(--pink-light) var(--pink-pale);
+  }
+  .stamp-scroll-wrap::-webkit-scrollbar { height: 4px; }
+  .stamp-scroll-wrap::-webkit-scrollbar-track { background: var(--pink-pale); border-radius: 4px; }
+  .stamp-scroll-wrap::-webkit-scrollbar-thumb { background: var(--pink-light); border-radius: 4px; }
+  .stamp-row { display: flex; gap: 10px; width: max-content; padding: 4px 2px; }
+  .stamp-option {
+    width: 52px; height: 52px; flex-shrink: 0;
+    border: 3px solid var(--pink-pale); border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.7rem; cursor: pointer; transition: all 0.2s ease; background: white;
+  }
+  .stamp-option:hover { border-color: var(--pink-light); transform: scale(1.1); }
+  .stamp-option.selected {
+    border-color: var(--pink); background: var(--pink-pale);
+    transform: scale(1.12); box-shadow: 0 4px 16px rgba(255,20,147,0.2);
+  }
+
+  /* ── BUTTONS ── */
+  .btn-row { display: flex; gap: 10px; margin-top: 18px; }
+  .btn {
+    flex: 1; padding: 13px 16px; border-radius: 16px; border: none;
+    font-family: 'Quicksand', sans-serif; font-size: 0.95rem; font-weight: 700;
+    cursor: pointer; transition: all 0.25s ease; letter-spacing: 0.5px; min-width: 0;
+  }
+  .btn-primary { background: var(--pink); color: white; box-shadow: 0 6px 20px rgba(255,20,147,0.35); }
+  .btn-primary:hover { background: #e0127f; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(255,20,147,0.45); }
+  .btn-primary:disabled { background: var(--pink-light); box-shadow: none; cursor: not-allowed; transform: none; opacity: 0.7; }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary { background: var(--pink-pale); color: var(--pink); border: 2px solid var(--pink-pale); }
+  .btn-secondary:hover { border-color: var(--pink-light); background: white; }
+
+  /* ── SENDING OVERLAY ── */
+  .sending-overlay {
+    position: absolute; inset: 0; background: rgba(255,255,255,0.92);
+    border-radius: 28px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px; z-index: 10;
+    backdrop-filter: blur(4px);
+  }
+  .sending-spinner {
+    width: 48px; height: 48px;
+    border: 4px solid var(--pink-pale);
+    border-top-color: var(--pink);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .sending-text { font-family: 'Caveat', cursive; font-size: 1.4rem; color: var(--pink); }
+
+  /* ── ENVELOPE ── */
+  #preview-section { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .envelope-wrapper { width: 100%; max-width: 380px; margin: 0 auto; position: relative; }
+  .envelope { width: 100%; aspect-ratio: 1.6; position: relative; cursor: pointer; }
+  .env-front, .env-back {
+    position: absolute; inset: 0; border-radius: 16px; overflow: hidden;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .env-back { opacity: 0; pointer-events: none; transform: scale(0.97); }
+  .envelope.flipped .env-front { opacity: 0; pointer-events: none; transform: scale(0.97); }
+  .envelope.flipped .env-back  { opacity: 1; pointer-events: auto;  transform: scale(1);    }
+  .env-front-face {
+    width: 100%; height: 100%; background: var(--pink-pale);
+    border: 3px solid var(--pink-light); border-radius: 16px;
+    position: relative; display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .env-flap-svg  { position: absolute; top: 0; left: 0; right: 0; height: 50%; pointer-events: none; overflow: hidden; }
+  .env-flap-svg svg { width: 100%; height: 200%; }
+  .env-bottom-svg { position: absolute; bottom: 0; left: 0; right: 0; height: 50%; pointer-events: none; overflow: hidden; }
+  .env-bottom-svg svg { width: 100%; height: 200%; position: absolute; bottom: 0; }
+  .env-stamp-corner {
+    position: absolute; top: 10px; right: 12px; z-index: 3;
+    width: 48px; height: 54px;
+    background: var(--pink-ultra); border: 3px solid var(--pink-pale);
+    border-radius: 4px; display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    outline: 3px dashed rgba(255,20,147,0.25); outline-offset: -6px;
+    animation: stampPulse 2.5s ease-in-out infinite; line-height: 1;
+  }
+  @keyframes stampPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+  .env-back-face {
+    width: 100%; height: 100%; background: var(--pink-pale);
+    border: 3px solid var(--pink-light); border-radius: 16px;
+    position: relative; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 8px; box-shadow: var(--shadow);
+  }
+  .env-back-stamp-circle {
+    width: 90px; height: 90px; background: var(--pink-ultra); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3.4rem; line-height: 1;
+    animation: stampPulse 2.5s ease-in-out infinite;
+    box-shadow: 0 4px 24px rgba(255,20,147,0.15);
+  }
+  .env-back-to   { font-family: 'Caveat', cursive; font-size: 1.6rem; font-weight: 700; color: #333; text-align: center; }
+  .env-back-from { font-family: 'Caveat', cursive; font-size: 1rem; color: var(--pink-light); text-align: center; }
+  .env-back-open { font-family: 'Caveat', cursive; font-size: 0.95rem; color: var(--pink); font-weight: 700; margin-top: 4px; }
+  .env-hint { font-size: 0.8rem; color: var(--pink-light); font-weight: 600; text-align: center; animation: hintBounce 1.6s ease-in-out infinite; }
+  @keyframes hintBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+  /* ── LETTER VIEW ── */
+  #letter-viewer { display: none; width: 100%; max-width: 400px; margin: 0 auto; }
+  #letter-viewer.visible { display: block; }
+  .letter-open-wrap { animation: letterRise 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+  @keyframes letterRise {
+    from { opacity: 0; transform: translateY(40px) scale(0.9); }
+    to   { opacity: 1; transform: translateY(0)    scale(1);   }
+  }
+  .letter-3fold {
+    border: 2.5px solid var(--pink-pale); border-radius: 16px; overflow: hidden;
+    box-shadow: var(--shadow-strong);
+    background-color: rgba(255,255,255,0.8);
+    background-image: repeating-linear-gradient(
+      transparent, transparent 31px,
+      rgba(255,105,180,0.14) 31px, rgba(255,105,180,0.14) 32px
+    );
+  }
+  .letter-fold-top { padding: 18px 20px 14px; border-bottom: 2px dashed var(--pink-pale); animation: unfoldTop 0.5s ease 0.2s both; }
+  .letter-fold-mid { padding: 14px 20px;       border-bottom: 2px dashed var(--pink-pale); animation: unfoldTop 0.5s ease 0.4s both; }
+  .letter-fold-bot { padding: 14px 20px 20px;                                               animation: unfoldTop 0.5s ease 0.6s both; }
+  @keyframes unfoldTop { from { opacity: 0; transform: scaleY(0.3); } to { opacity: 1; transform: scaleY(1); } }
+  .letter-salutation   { font-family: 'Caveat', cursive; font-size: 1.4rem; color: var(--pink); font-weight: 700; }
+  .letter-date-display { font-family: 'Caveat', cursive; font-size: 0.9rem; color: var(--pink-light); text-align: right; margin-bottom: 8px; display: block; }
+  .letter-body-text    { font-family: 'Caveat', cursive; font-size: 1.15rem; color: #333; line-height: 32px; white-space: pre-wrap; word-break: break-word; }
+  .letter-sign         { font-family: 'Caveat', cursive; font-size: 1.2rem; color: var(--pink); font-weight: 700; text-align: right; }
+  .letter-heart-sign   { font-size: 1.4rem; }
+
+  /* ── SHARE CARD ── */
+  .share-card { background: var(--pink-ultra); border: 2.5px dashed var(--pink-light); border-radius: 20px; padding: 20px; text-align: center; }
+  .share-card h3 { font-family: 'Caveat', cursive; font-size: 1.5rem; color: var(--pink); margin-bottom: 6px; }
+  .share-card p  { font-size: 0.82rem; color: var(--gray); margin-bottom: 14px; }
+  .link-box {
+    background: white; border: 2px solid var(--pink-pale); border-radius: 12px;
+    padding: 10px 14px; font-size: 0.72rem; color: var(--pink);
+    word-break: break-all; margin-bottom: 12px; font-weight: 600;
+    cursor: pointer; transition: border-color 0.2s; user-select: all;
+  }
+  .link-box:hover { border-color: var(--pink-light); }
+  .share-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+  .share-btn {
+    padding: 11px 8px; border-radius: 12px; border: 2.5px solid var(--pink-pale);
+    font-family: 'Quicksand', sans-serif; font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    background: white; color: #333; white-space: nowrap; overflow: hidden;
+  }
+  .share-btn:hover { border-color: var(--pink); color: var(--pink); transform: translateY(-2px); }
+  .share-btn.copy-btn { background: var(--pink); color: white; border-color: var(--pink); grid-column: 1 / -1; }
+  .share-btn.copy-btn:hover { background: #e0127f; color: white; border-color: #e0127f; }
+
+  /* ── RECEIVE SCREEN ── */
+  #receive-screen { width: 100%; max-width: 520px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .receive-heading { text-align: center; animation: cardIn 0.6s ease both; }
+  .receive-heading h1 { font-family: 'Caveat', cursive; font-size: 2.2rem; color: var(--pink); line-height: 1.1; }
+  .receive-heading p  { color: var(--gray); font-size: 0.88rem; margin-top: 4px; font-weight: 500; }
+  .receive-envelope-wrap { width: 100%; max-width: 380px; cursor: pointer; animation: cardIn 0.7s ease 0.2s both; }
+  .rec-letter-reveal { display: none; width: 100%; animation: cardIn 0.6s ease both; }
+  .rec-letter-reveal.show { display: block; }
+  .rec-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 380px; animation: cardIn 0.8s ease 0.3s both; }
+
+  /* ── LOADING SCREEN ── */
+  #screen-loading {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 18px; min-height: 60vh;
+  }
+  .loading-heart { font-size: 3.5rem; animation: heartbeat 1s ease-in-out infinite; }
+  @keyframes heartbeat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+  .loading-text { font-family: 'Caveat', cursive; font-size: 1.5rem; color: var(--pink); }
+
+  /* ── ERROR CARD ── */
+  .error-card {
+    background: white; border: 2.5px solid #FFE4E4; border-radius: 24px;
+    padding: 32px 24px; text-align: center; max-width: 380px; width: 100%;
+    box-shadow: var(--shadow);
+  }
+  .error-card .error-icon { font-size: 3rem; margin-bottom: 12px; }
+  .error-card h3 { font-family: 'Caveat', cursive; font-size: 1.6rem; color: #E53935; margin-bottom: 8px; }
+  .error-card p  { font-size: 0.88rem; color: var(--gray); line-height: 1.6; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 70px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #333; color: white;
+    padding: 10px 20px; border-radius: 50px;
+    font-size: 0.88rem; font-weight: 600;
+    opacity: 0; transition: all 0.3s ease;
+    pointer-events: none; z-index: 999; white-space: nowrap;
+    max-width: calc(100vw - 32px); text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── SCREENS ── */
+  .screen { display: none; width: 100%; justify-content: center; }
+  .screen.active { display: flex; animation: screenIn 0.4s ease both; }
+  @keyframes screenIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
+
+  #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 500; }
+
+  .wax-seal {
+    width: 50px; height: 50px; background: var(--pink); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; margin: 10px auto;
+    box-shadow: 0 4px 16px rgba(255,20,147,0.4);
+    animation: sealPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  @keyframes sealPop { from { transform: scale(0); } to { transform: scale(1); } }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 480px) {
+    .card { padding: 22px 14px; }
+    .card h2 { font-size: 1.55rem; }
+    .share-btns { grid-template-columns: 1fr; }
+    .share-btn.copy-btn { grid-column: 1; }
+    .header-tagline { display: none; }
+    main { padding: 64px 10px 80px; }
+  }
+  @media (max-width: 420px) {
+    footer { flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; min-height: 60px; }
+    .footer-copy { text-align: center; white-space: normal; }
+  }
+  @media (max-width: 360px) {
+    .logo { font-size: 1.3rem; }
+    .card { padding: 18px 12px; }
+    .btn  { font-size: 0.85rem; padding: 11px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hearts-bg" id="heartsBg"></div>
+<canvas id="confetti-canvas"></canvas>
+<div class="toast" id="toast"></div>
+<audio id="bg-audio" loop preload="auto"><source src="heart.mp3" type="audio/mpeg"></audio>
+
+<!-- ══ HEADER ══ -->
+<header>
+  <div class="logo"><span>💌</span> CiCi</div>
+  <div class="header-tagline">Send love · Receive joy</div>
+  <button id="mute-btn" onclick="toggleMute()" title="Toggle music" aria-label="Toggle music">
+    <svg class="icon-on" viewBox="0 0 24 24">
+      <path d="M9 18V5l12-2v13"/>
+      <circle cx="6" cy="18" r="3"/>
+      <circle cx="18" cy="16" r="3"/>
+    </svg>
+    <svg class="icon-off" viewBox="0 0 24 24">
+      <path d="M9 18V5l12-2v13"/>
+      <circle cx="6" cy="18" r="3"/>
+      <circle cx="18" cy="16" r="3"/>
+      <line x1="2" y1="2" x2="22" y2="22"/>
+    </svg>
+  </button>
+</header>
+
+<!-- ══ MAIN ══ -->
+<main>
+
+  <!-- LOADING -->
+  <div class="screen active" id="screen-loading">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:18px;min-height:60vh;justify-content:center;">
+      <div class="loading-heart">💌</div>
+      <div class="loading-text" id="loading-text">Loading...</div>
+    </div>
+  </div>
+
+  <!-- ════ COMPOSE FLOW ════ -->
+  <div class="screen" id="screen-compose">
+    <div style="width:100%;max-width:520px;">
+
+      <!-- Step 1: Names -->
+      <div id="step-1" class="card">
+        <div class="card-corner">✉️</div>
+        <div class="steps"><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+        <h2>Who's this letter for? 💕</h2>
+        <p class="subtitle">Fill in the names to begin your letter</p>
+        <div class="input-group">
+          <label>To: (Recipient's Name)</label>
+          <input type="text" id="name-to" placeholder="e.g. Lily, Mom, Best Friend..." maxlength="40"/>
+        </div>
+        <div class="input-group">
+          <label>From: (Your Name)</label>
+          <input type="text" id="name-from" placeholder="e.g. Your Secret Admirer..." maxlength="40"/>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="goStep(2)">Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Write -->
+      <div id="step-2" class="card" style="display:none;">
+        <div class="card-corner">🖊️</div>
+        <div class="steps"><div class="step-dot done"></div><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+        <h2>Write your letter 📝</h2>
+        <p class="subtitle">Let your heart speak freely</p>
+        <div class="letter-paper">
+          <span class="letter-date" id="letter-date-display"></span>
+          <textarea id="letter-body" rows="7" placeholder="Start writing your letter here..."></textarea>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goStep(1)">← Back</button>
+          <button class="btn btn-primary" onclick="goStep(3)">Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Stamp -->
+      <div id="step-3" class="card" style="display:none;">
+        <div class="card-corner">📮</div>
+        <div class="steps"><div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot active"></div><div class="step-dot"></div></div>
+        <h2>Pick your stamp! 🎨</h2>
+        <p class="subtitle">Scroll to find your favourite</p>
+        <div class="stamp-scroll-wrap"><div class="stamp-row" id="stamp-row"></div></div>
+        <div style="text-align:center;font-size:4.5rem;min-height:72px;margin-bottom:4px;line-height:1.1;" id="stamp-preview-big"></div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goStep(2)">← Back</button>
+          <button class="btn btn-primary" onclick="goStep(4)">Preview →</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Preview -->
+      <div id="step-4" class="card" style="display:none;">
+        <div class="card-corner">👀</div>
+        <div class="steps"><div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot active"></div></div>
+        <h2>Preview your letter 💌</h2>
+        <p class="subtitle">Tap the envelope to see the magic!</p>
+        <div id="preview-section">
+          <div class="envelope-wrapper">
+            <div class="envelope" id="previewEnvelope" onclick="previewEnvelopeClick()">
+              <div class="env-front">
+                <div class="env-front-face">
+                  <div class="env-flap-svg"><svg viewBox="0 0 400 200" preserveAspectRatio="none"><polygon points="0,0 400,0 200,140" fill="#FFE4F0" stroke="#FFB6D9" stroke-width="2"/></svg></div>
+                  <div class="env-bottom-svg"><svg viewBox="0 0 400 200" preserveAspectRatio="none"><polygon points="0,200 200,60 400,200" fill="none" stroke="#FFB6D9" stroke-width="1.5"/></svg></div>
+                  <div class="env-back-stamp-circle" id="stampCircle">🌹</div>
+                </div>
+              </div>
+              <div class="env-back">
+                <div class="env-back-face">
+                  <div class="env-stamp-corner" id="stampFront">🌹</div>
+                  <div class="env-back-to" id="previewBackTo">To: Someone Special</div>
+                  <div class="env-back-from" id="previewBackFrom">From: A Friend</div>
+                  <div class="env-back-open">Tap to open! ✨</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="env-hint" id="envHint">Tap to flip the envelope 👆</p>
+          <div id="letter-viewer">
+            <div class="letter-open-wrap">
+              <div class="letter-3fold">
+                <div class="letter-fold-top">
+                  <span class="letter-date-display" id="previewDate"></span>
+                  <div class="letter-salutation" id="previewSalutation">Dear Someone,</div>
+                </div>
+                <div class="letter-fold-mid">
+                  <div class="letter-body-text" id="previewBody"></div>
+                </div>
+                <div class="letter-fold-bot">
+                  <div class="letter-sign">With love, <span id="previewSignName">You</span> <span class="letter-heart-sign">💕</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:20px;">
+          <button class="btn btn-secondary" onclick="goStep(3);resetPreview()">← Back</button>
+          <button class="btn btn-primary" id="send-btn" onclick="sendLetter()">Send it! 🚀</button>
+        </div>
+      </div>
+
+      <!-- Step 5: Share -->
+      <div id="step-5" class="card" style="display:none;">
+        <div class="wax-seal">💌</div>
+        <h2 style="text-align:center;">Your letter is ready! 🎉</h2>
+        <p class="subtitle" style="text-align:center;margin-bottom:18px;">Share this link with <span id="shareRecipientName" style="color:var(--pink);font-weight:700;"></span></p>
+        <div class="share-card">
+          <h3>Share your letter 💌</h3>
+          <p>Copy or share the link — anyone with it can open your letter!</p>
+          <div class="link-box" id="shareLinkBox" onclick="copyLink()">generating...</div>
+          <div class="share-btns">
+            <button class="share-btn copy-btn" onclick="copyLink()">📋 Copy Link</button>
+            <button class="share-btn" onclick="shareNative()" style="grid-column:1/-1;">📤 Share</button>
+          </div>
+        </div>
+        <button class="btn btn-secondary" style="margin-top:12px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;" onclick="downloadComposedPDF()">
+          💾 Save a copy as Image
+        </button>
+        <div class="btn-row" style="margin-top:14px;">
+          <button class="btn btn-secondary" onclick="startNew()">✍️ Write another</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════ RECEIVE FLOW ════ -->
+  <div class="screen" id="screen-receive">
+    <div id="receive-screen">
+      <div class="receive-heading">
+        <h1>You've got mail! 💌</h1>
+        <p id="rec-hint-text">A letter is waiting for you...</p>
+      </div>
+      <div class="envelope-wrapper receive-envelope-wrap" id="receiveEnvWrap" onclick="receiveEnvelopeClick()">
+        <div class="envelope" id="receiveEnvelope">
+          <div class="env-front">
+            <div class="env-front-face">
+              <div class="env-flap-svg"><svg viewBox="0 0 400 200" preserveAspectRatio="none"><polygon points="0,0 400,0 200,140" fill="#FFE4F0" stroke="#FFB6D9" stroke-width="2"/></svg></div>
+              <div class="env-bottom-svg"><svg viewBox="0 0 400 200" preserveAspectRatio="none"><polygon points="0,200 200,60 400,200" fill="none" stroke="#FFB6D9" stroke-width="1.5"/></svg></div>
+              <div class="env-back-stamp-circle" id="recStampCircle">💌</div>
+            </div>
+          </div>
+          <div class="env-back">
+            <div class="env-back-face">
+              <div class="env-stamp-corner" id="recStampFront">💌</div>
+              <div class="env-back-to" id="recTo">To: You!</div>
+              <div class="env-back-from" id="recFrom">From: Someone Special</div>
+              <div class="env-back-open">Tap to open! ✨</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="env-hint" id="recHint">Tap to open your letter 💕</p>
+      <div class="rec-letter-reveal" id="recLetterReveal">
+        <div class="letter-open-wrap">
+          <div class="letter-3fold">
+            <div class="letter-fold-top">
+              <span class="letter-date-display" id="recLetterDate"></span>
+              <div class="letter-salutation" id="recSalutation">Dear Someone,</div>
+            </div>
+            <div class="letter-fold-mid">
+              <div class="letter-body-text" id="recBody">Loading...</div>
+            </div>
+            <div class="letter-fold-bot">
+              <div class="letter-sign">With love, <span id="recSignName"></span> <span class="letter-heart-sign">💕</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="rec-actions" id="recActions" style="display:none;">
+        <button class="btn btn-primary" onclick="downloadPDF()">💾 Save as Image</button>
+        <button class="btn btn-secondary" onclick="replyToLetter()">✍️ Reply to this letter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ERROR SCREEN -->
+  <div class="screen" id="screen-error">
+    <div class="error-card">
+      <div class="error-icon">💔</div>
+      <h3>Letter not found</h3>
+      <p>This link may have expired or the letter doesn't exist. Ask the sender to share it again!</p>
+      <div class="btn-row" style="margin-top:20px;">
+        <button class="btn btn-primary" onclick="showScreen('screen-compose')">Write a letter</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-copy">© 2025 CiCi · Made with 💕 · Share love, one letter at a time</div>
+  <div class="footer-socials">
+    <a href="#" title="Instagram" aria-label="Instagram">
+      <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" class="dot"/></svg>
+    </a>
+    <a href="#" title="Facebook" aria-label="Facebook">
+      <svg viewBox="0 0 24 24"><path d="M17 2h-3a4 4 0 0 0-4 4v3H7v4h3v9h4v-9h3l1-4h-4V6a1 1 0 0 1 1-1h3z"/></svg>
+    </a>
+    <a href="#" title="X" aria-label="X">
+      <svg viewBox="0 0 24 24"><path d="M4 4L20 20M20 4L4 20"/></svg>
+    </a>
+    <a href="#" title="TikTok" aria-label="TikTok">
+      <svg viewBox="0 0 24 24"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+    </a>
+  </div>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// CONFIG — Supabase
+// ══════════════════════════════════════════════════════════
+const SUPABASE_URL = 'https://izfdodjvyqiptpllwnjp.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_ysgbkJ8BTi9wVwXahsMISA_alRVhQ-J';
+const SITE_URL     = 'https://abbel-dawit.github.io/Cici';
+
+async function sbFetch(path, options = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': options.prefer || '',
+      ...(options.headers || {})
+    }
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Supabase error ${res.status}: ${err}`);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+async function saveLetter(data) {
+  const result = await sbFetch('letters?select=id', {
+    method: 'POST',
+    prefer: 'return=representation',
+    body: JSON.stringify({
+      recipient:   data.to,
+      sender:      data.from,
+      body:        data.body,
+      stamp:       data.stamp,
+      letter_date: data.date
+    })
+  });
+  return result[0].id;
+}
+
+async function fetchLetter(id) {
+  const rows = await sbFetch(`letters?id=eq.${encodeURIComponent(id)}&select=*`);
+  if (!rows || rows.length === 0) throw new Error('Letter not found');
+  return rows[0];
+}
+
+// ══════════════════════════════════════════════════════════
+// AUDIO ENGINE — UI sounds
+// ══════════════════════════════════════════════════════════
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let ctx;
+function getCtx() { if (!ctx) ctx = new AudioCtx(); return ctx; }
+
+function playTone(freq, type = 'sine', dur = 0.15, vol = 0.15) {
+  try {
+    const ac = getCtx();
+    const osc = ac.createOscillator(), gain = ac.createGain();
+    osc.connect(gain); gain.connect(ac.destination);
+    osc.type = type; osc.frequency.value = freq;
+    gain.gain.setValueAtTime(vol, ac.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + dur);
+    osc.start(); osc.stop(ac.currentTime + dur);
+  } catch(e) {}
+}
+function playClick()       { playTone(880,'sine',0.12,0.18); setTimeout(()=>playTone(1100,'sine',0.08,0.1),40); }
+function playNext()        { [523,659,784].forEach((f,i)=>setTimeout(()=>playTone(f,'sine',0.15,0.18),i*80)); }
+function playBack()        { playTone(440,'sine',0.15,0.15); }
+function playFlip()        { [784,988,1175].forEach((f,i)=>setTimeout(()=>playTone(f,'triangle',0.12,0.15),i*60)); }
+function playOpen()        { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,'sine',0.2,0.2),i*70)); }
+function playShare()       { [659,784,988,1175,1319].forEach((f,i)=>setTimeout(()=>playTone(f,'sine',0.18,0.22),i*60)); }
+function playStampSelect() { playTone(1046,'triangle',0.1,0.2); }
+
+// ══════════════════════════════════════════════════════════
+// BACKGROUND MUSIC
+// ══════════════════════════════════════════════════════════
+let musicStarted = false;
+let isMuted = false;
+const bgAudio = document.getElementById('bg-audio');
+
+function startMusic() {
+  if (musicStarted || isMuted) return;
+  bgAudio.volume = 0.25;
+  bgAudio.play().then(() => { musicStarted = true; }).catch(() => {});
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  const btn = document.getElementById('mute-btn');
+  if (isMuted) {
+    btn.classList.add('muted');
+    bgAudio.pause(); musicStarted = false;
+  } else {
+    btn.classList.remove('muted');
+    bgAudio.volume = 0.25;
+    bgAudio.play().then(() => { musicStarted = true; }).catch(() => {});
+  }
+}
+
+function tryAutoplay() {
+  if (musicStarted || isMuted) return;
+  bgAudio.volume = 0.25;
+  bgAudio.play().then(() => { musicStarted = true; }).catch(() => {
+    document.addEventListener('click',      () => { getCtx(); startMusic(); }, { once: true });
+    document.addEventListener('touchstart', () => { getCtx(); startMusic(); }, { once: true });
+  });
+}
+if (document.readyState === 'complete') tryAutoplay();
+else window.addEventListener('load', tryAutoplay);
+
+// ══════════════════════════════════════════════════════════
+// FLOATING HEARTS
+// ══════════════════════════════════════════════════════════
+const heartsBg    = document.getElementById('heartsBg');
+const heartEmojis = ['💕','💖','💗','💓','💘','💝','✨','⭐','🌸','🎀'];
+for (let i = 0; i < 18; i++) {
+  const h = document.createElement('span');
+  h.className = 'heart-particle';
+  h.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+  h.style.left = Math.random() * 100 + 'vw';
+  h.style.animationDuration = (8 + Math.random() * 12) + 's';
+  h.style.animationDelay    = (Math.random() * 10) + 's';
+  h.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
+  heartsBg.appendChild(h);
+}
+
+// ══════════════════════════════════════════════════════════
+// STAMPS
+// ══════════════════════════════════════════════════════════
+const stamps = [
+  '❤️','💕','💖','💗','💓','💘','💝','💞','💟','🩷','💌','💋','😍','🥰','😘',
+  '🌹','🌸','🌺','🌻','🌼','🌷','💐','🌱','🌿','🍀','🌈','☀️','🌙','⭐','✨',
+  '🐱','🐶','🦋','🐝','🦊','🐰','🐻','🐼','🦄','🐸','🐙','🐧','🦜','🐬','🦋',
+  '🎉','🎊','🎈','🎁','🎀','🥂','🍾','🎆','🎇','✨','🪄','👑','🏆','🌟','💫',
+  '🍭','🍬','🍩','🧁','🎂','🍓','🍒','🍑','🍋','🍰','🍫','🍪','🧃','🫧','🍵',
+  '🎵','🎶','🎨','🎸','🎹','🎺','🎻','🥁','🎤','🎭','🎬','🖌️','✏️','📖','📜',
+  '🌌','🪐','🚀','🛸','🌙','🌠','🌟','💫','⭐','🔮','🧿','🪬','🗝️','🫧','🌊'
+];
+let selectedStamp = stamps[0];
+const stampRow = document.getElementById('stamp-row');
+stamps.forEach((s, idx) => {
+  const el = document.createElement('div');
+  el.className = 'stamp-option' + (idx === 0 ? ' selected' : '');
+  el.textContent = s;
+  el.onclick = () => {
+    document.querySelectorAll('.stamp-option').forEach(x => x.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedStamp = s;
+    document.getElementById('stamp-preview-big').textContent = s;
+    playStampSelect();
+  };
+  stampRow.appendChild(el);
+});
+document.getElementById('stamp-preview-big').textContent = stamps[0];
+
+// ══════════════════════════════════════════════════════════
+// SCREEN MANAGEMENT
+// ══════════════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════
+// STEP NAVIGATION
+// ══════════════════════════════════════════════════════════
+let currentStep = 1;
+
+function showStep(n) {
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('step-' + i);
+    if (el) el.style.display = (i === n) ? 'block' : 'none';
+  }
+  currentStep = n;
+  updateStepDots(n);
+}
+
+function updateStepDots(n) {
+  const card = document.getElementById('step-' + n);
+  if (!card) return;
+  card.querySelectorAll('.step-dot').forEach((d, i) => {
+    d.classList.remove('active', 'done');
+    if (i + 1 < n) d.classList.add('done');
+    else if (i + 1 === n) d.classList.add('active');
+  });
+}
+
+function goStep(n) {
+  if (n > currentStep) playNext(); else if (n < currentStep) playBack();
+  if (n === 2) {
+    const nameTo   = document.getElementById('name-to').value.trim();
+    const nameFrom = document.getElementById('name-from').value.trim();
+    if (!nameTo || !nameFrom) { showToast('Please fill in both names 💕'); playBack(); return; }
+    document.getElementById('letter-date-display').textContent =
+      new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+  }
+  if (n === 4) {
+    const body = document.getElementById('letter-body').value.trim();
+    if (!body) { showToast('Please write something in your letter! ✍️'); playBack(); return; }
+    updatePreview();
+  }
+  showScreen('screen-compose');
+  showStep(n);
+}
+
+function updatePreview() {
+  const to   = document.getElementById('name-to').value.trim()   || 'Someone Special';
+  const from = document.getElementById('name-from').value.trim() || 'A Friend';
+  const body = document.getElementById('letter-body').value.trim();
+  const dateStr = new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+  document.getElementById('stampFront').textContent        = selectedStamp;
+  document.getElementById('stampCircle').textContent       = selectedStamp;
+  document.getElementById('previewBackTo').textContent     = 'To: ' + to;
+  document.getElementById('previewBackFrom').textContent   = 'From: ' + from;
+  document.getElementById('previewDate').textContent       = dateStr;
+  document.getElementById('previewSalutation').textContent = 'Dear ' + to + ',';
+  document.getElementById('previewBody').textContent       = body;
+  document.getElementById('previewSignName').textContent   = from;
+}
+
+// ══════════════════════════════════════════════════════════
+// ENVELOPE INTERACTION (compose preview)
+// ══════════════════════════════════════════════════════════
+let envState = 0;
+
+function previewEnvelopeClick() {
+  playFlip();
+  if (envState === 0) {
+    document.getElementById('previewEnvelope').classList.add('flipped');
+    document.getElementById('envHint').textContent = 'Tap again to open the letter 💌';
+    envState = 1;
+  } else if (envState === 1) {
+    playOpen();
+    document.getElementById('letter-viewer').classList.add('visible');
+    document.getElementById('envHint').style.display = 'none';
+    document.getElementById('previewEnvelope').style.display = 'none';
+    envState = 2;
+  }
+}
+
+function resetPreview() {
+  envState = 0;
+  const pe = document.getElementById('previewEnvelope');
+  pe.classList.remove('flipped'); pe.style.display = '';
+  document.getElementById('letter-viewer').classList.remove('visible');
+  const eh = document.getElementById('envHint');
+  eh.style.display = ''; eh.textContent = 'Tap to flip the envelope 👆';
+}
+
+// ══════════════════════════════════════════════════════════
+// SEND LETTER → SUPABASE
+// ══════════════════════════════════════════════════════════
+let shareURL = '';
+
+async function sendLetter() {
+  playShare();
+  const to   = document.getElementById('name-to').value.trim();
+  const from = document.getElementById('name-from').value.trim();
+  const body = document.getElementById('letter-body').value.trim();
+  const date = new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+
+  const btn = document.getElementById('send-btn');
+  btn.disabled = true; btn.textContent = 'Sending... 💕';
+
+  // Show spinner overlay
+  const card = document.getElementById('step-4');
+  const overlay = document.createElement('div');
+  overlay.className = 'sending-overlay';
+  overlay.innerHTML = '<div class="sending-spinner"></div><div class="sending-text">Sealing your letter... 💌</div>';
+  card.appendChild(overlay);
+
+  try {
+    const id = await saveLetter({ to, from, body, stamp: selectedStamp, date });
+    shareURL = `${SITE_URL}?id=${id}`;
+    document.getElementById('shareLinkBox').textContent = shareURL;
+    document.getElementById('shareRecipientName').textContent = to;
+    card.removeChild(overlay);
+    showStep(5);
+    launchConfetti();
+  } catch(err) {
+    card.removeChild(overlay);
+    btn.disabled = false; btn.textContent = 'Send it! 🚀';
+    showToast('Oops! Could not send. Please try again. 💔');
+    console.error(err);
+  }
+}
+
+function copyLink() {
+  playClick();
+  navigator.clipboard.writeText(shareURL)
+    .then(() => showToast('Link copied! 🎉'))
+    .catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = shareURL; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      showToast('Link copied! 🎉');
+    });
+}
+
+function shareNative() {
+  playClick();
+  if (navigator.share) {
+    navigator.share({ title: 'You have a letter! 💌', text: 'Someone sent you a heartfelt letter 💕', url: shareURL });
+  } else copyLink();
+}
+
+function startNew() {
+  playClick();
+  document.getElementById('name-to').value   = '';
+  document.getElementById('name-from').value = '';
+  document.getElementById('letter-body').value = '';
+  selectedStamp = stamps[0];
+  document.querySelectorAll('.stamp-option').forEach((el, i) => {
+    el.classList.remove('selected');
+    if (i === 0) el.classList.add('selected');
+  });
+  document.getElementById('stamp-preview-big').textContent = stamps[0];
+  document.getElementById('send-btn').disabled = false;
+  document.getElementById('send-btn').textContent = 'Send it! 🚀';
+  resetPreview();
+  showStep(1);
+}
+
+// ══════════════════════════════════════════════════════════
+// RECEIVE FLOW
+// ══════════════════════════════════════════════════════════
+let recEnvState = 0;
+let letterData  = null;
+
+function loadReceiveScreen() {
+  document.getElementById('recStampCircle').textContent = letterData.stamp || '💌';
+  document.getElementById('recStampFront').textContent  = letterData.stamp || '💌';
+  document.getElementById('recTo').textContent          = 'To: '   + letterData.recipient;
+  document.getElementById('recFrom').textContent        = 'From: ' + letterData.sender;
+  document.getElementById('recLetterDate').textContent  = letterData.letter_date || '';
+  document.getElementById('recSalutation').textContent  = 'Dear '  + letterData.recipient + ',';
+  document.getElementById('recBody').textContent        = letterData.body;
+  document.getElementById('recSignName').textContent    = letterData.sender;
+  document.getElementById('rec-hint-text').textContent  = 'A letter from ' + letterData.sender + ' is waiting for you!';
+}
+
+function receiveEnvelopeClick() {
+  playFlip();
+  if (recEnvState === 0) {
+    document.getElementById('receiveEnvelope').classList.add('flipped');
+    document.getElementById('recHint').textContent = 'Tap again to read the letter 💕';
+    recEnvState = 1;
+  } else if (recEnvState === 1) {
+    playOpen();
+    document.getElementById('receiveEnvWrap').style.display = 'none';
+    document.getElementById('recHint').style.display        = 'none';
+    document.getElementById('recLetterReveal').classList.add('show');
+    document.getElementById('recActions').style.display = 'flex';
+    document.getElementById('recActions').style.flexDirection = 'column';
+    launchConfetti();
+    recEnvState = 2;
+  }
+}
+
+function replyToLetter() {
+  playClick();
+  document.getElementById('name-to').value   = letterData.sender;
+  document.getElementById('name-from').value = letterData.recipient;
+  document.getElementById('letter-body').value = '';
+  showScreen('screen-compose');
+  showStep(2);
+  document.getElementById('letter-date-display').textContent =
+    new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+  window.history.replaceState({}, '', window.location.pathname);
+}
+
+// ══════════════════════════════════════════════════════════
+// PNG DOWNLOAD
+// ══════════════════════════════════════════════════════════
+function buildLetterCanvas(data, callback) {
+  const dateStr = data.letter_date || data.date ||
+    new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+  const to   = data.recipient || data.to   || '';
+  const from = data.sender    || data.from || '';
+  const W = 700, PAD = 48;
+  const canvas = document.createElement('canvas');
+  canvas.width = W;
+  const ctx2 = canvas.getContext('2d');
+
+  Promise.all([
+    document.fonts.load('700 40px Caveat'),
+    document.fonts.load('600 24px Quicksand')
+  ]).then(() => {
+    const bannerH = 90, stripH = 68, letterPad = 36;
+    ctx2.font = '28px Caveat';
+    const lineH = 34, bodyW = W - PAD * 2 - 24;
+    const bodyLines = wrapText(ctx2, data.body, bodyW);
+    const letterH = letterPad + 28 + 44 + 48 + (bodyLines.length * lineH) + 24 + 40 + letterPad;
+    const footerH = 44;
+    const totalH = bannerH + stripH + letterH + footerH;
+    canvas.height = totalH;
+
+    ctx2.fillStyle = '#FFF0F7'; ctx2.fillRect(0, 0, W, totalH);
+    const cx = 28, cw = W - cx * 2;
+    roundRect(ctx2, cx, 0, cw, totalH, 24); ctx2.fillStyle = 'white'; ctx2.fill();
+    ctx2.strokeStyle = '#FFE4F0'; ctx2.lineWidth = 3; ctx2.stroke();
+
+    const grad = ctx2.createLinearGradient(cx, 0, cx + cw, bannerH);
+    grad.addColorStop(0, '#FF1493'); grad.addColorStop(1, '#FF69B4');
+    roundRectTop(ctx2, cx, 0, cw, bannerH, 24); ctx2.fillStyle = grad; ctx2.fill();
+    ctx2.font = 'bold 42px Caveat'; ctx2.fillStyle = 'white'; ctx2.fillText('💌 CiCi', cx + 32, 58);
+    ctx2.font = '52px serif'; ctx2.fillText(data.stamp || '💌', W - cx - 90, 62);
+
+    const stripY = bannerH;
+    ctx2.fillStyle = '#FFF0F7'; ctx2.fillRect(cx, stripY, cw, stripH);
+    ctx2.strokeStyle = '#FFE4F0'; ctx2.lineWidth = 2; ctx2.setLineDash([8,6]);
+    ctx2.beginPath(); ctx2.moveTo(cx, stripY+stripH); ctx2.lineTo(cx+cw, stripY+stripH); ctx2.stroke();
+    ctx2.setLineDash([]);
+    ctx2.font = 'bold 30px Caveat'; ctx2.fillStyle = '#222'; ctx2.fillText('To: ' + to, cx+32, stripY+36);
+    ctx2.font = '22px Caveat'; ctx2.fillStyle = '#FF69B4'; ctx2.fillText('From: ' + from, cx+32, stripY+58);
+    ctx2.font = '32px serif'; ctx2.fillText(data.stamp || '💌', W-cx-60, stripY+46);
+
+    const lY = bannerH + stripH;
+    ctx2.fillStyle = 'white'; ctx2.fillRect(cx, lY, cw, letterH);
+    ctx2.strokeStyle = 'rgba(255,105,180,0.18)'; ctx2.lineWidth = 1;
+    for (let y = lY+letterPad+lineH; y < lY+letterH-letterPad; y += lineH) {
+      ctx2.beginPath(); ctx2.moveTo(cx+8, y); ctx2.lineTo(cx+cw-8, y); ctx2.stroke();
+    }
+    ctx2.strokeStyle = 'rgba(255,20,147,0.18)'; ctx2.lineWidth = 2;
+    ctx2.beginPath(); ctx2.moveTo(cx+68, lY); ctx2.lineTo(cx+68, lY+letterH); ctx2.stroke();
+
+    let textY = lY + letterPad + 28;
+    ctx2.font = '22px Caveat'; ctx2.fillStyle = '#FF69B4'; ctx2.textAlign = 'right';
+    ctx2.fillText(dateStr, cx+cw-20, textY); textY += 44;
+    ctx2.textAlign = 'left'; ctx2.font = 'bold 34px Caveat'; ctx2.fillStyle = '#FF1493';
+    ctx2.fillText('Dear ' + to + ',', cx+80, textY); textY += 48;
+    ctx2.font = '28px Caveat'; ctx2.fillStyle = '#333';
+    bodyLines.forEach(line => { ctx2.fillText(line, cx+80, textY); textY += lineH; });
+    textY += 24;
+    ctx2.font = 'bold 30px Caveat'; ctx2.fillStyle = '#FF1493'; ctx2.textAlign = 'right';
+    ctx2.fillText('With love, ' + from + ' 💕', cx+cw-20, textY);
+
+    const fY = bannerH + stripH + letterH;
+    roundRectBottom(ctx2, cx, fY, cw, footerH, 24);
+    ctx2.fillStyle = '#FFF0F7'; ctx2.fill();
+    ctx2.strokeStyle = '#FFE4F0'; ctx2.lineWidth = 2; ctx2.stroke();
+    ctx2.font = '600 14px Quicksand'; ctx2.fillStyle = '#FF69B4'; ctx2.textAlign = 'center';
+    ctx2.fillText('✨ Made with CiCi · Share love, one letter at a time ✨', W/2, fY+27);
+
+    callback(canvas);
+  });
+}
+
+function wrapText(ctx2, text, maxW) {
+  const lines = [];
+  (text || '').split('\n').forEach(para => {
+    if (!para.trim()) { lines.push(''); return; }
+    let cur = '';
+    para.split(' ').forEach(w => {
+      const test = cur ? cur + ' ' + w : w;
+      if (ctx2.measureText(test).width > maxW) { if (cur) lines.push(cur); cur = w; }
+      else cur = test;
+    });
+    if (cur) lines.push(cur);
+  });
+  return lines;
+}
+
+function roundRect(ctx2, x, y, w, h, r) {
+  ctx2.beginPath(); ctx2.moveTo(x+r, y);
+  ctx2.lineTo(x+w-r, y); ctx2.arcTo(x+w, y, x+w, y+r, r);
+  ctx2.lineTo(x+w, y+h-r); ctx2.arcTo(x+w, y+h, x+w-r, y+h, r);
+  ctx2.lineTo(x+r, y+h); ctx2.arcTo(x, y+h, x, y+h-r, r);
+  ctx2.lineTo(x, y+r); ctx2.arcTo(x, y, x+r, y, r); ctx2.closePath();
+}
+function roundRectTop(ctx2, x, y, w, h, r) {
+  ctx2.beginPath(); ctx2.moveTo(x+r, y);
+  ctx2.lineTo(x+w-r, y); ctx2.arcTo(x+w, y, x+w, y+r, r);
+  ctx2.lineTo(x+w, y+h); ctx2.lineTo(x, y+h);
+  ctx2.lineTo(x, y+r); ctx2.arcTo(x, y, x+r, y, r); ctx2.closePath();
+}
+function roundRectBottom(ctx2, x, y, w, h, r) {
+  ctx2.beginPath(); ctx2.moveTo(x, y); ctx2.lineTo(x+w, y);
+  ctx2.lineTo(x+w, y+h-r); ctx2.arcTo(x+w, y+h, x+w-r, y+h, r);
+  ctx2.lineTo(x+r, y+h); ctx2.arcTo(x, y+h, x, y+h-r, r);
+  ctx2.lineTo(x, y); ctx2.closePath();
+}
+
+function downloadPNG(data, filename) {
+  playClick(); showToast('Preparing your image... ✨');
+  buildLetterCanvas(data, canvas => {
+    const link = document.createElement('a');
+    link.download = filename || 'cici-letter.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('Saved! 💕');
+  });
+}
+
+function downloadPDF() {
+  downloadPNG(letterData, `cici-letter-to-${(letterData.recipient||'friend').replace(/\s+/g,'-')}.png`);
+}
+
+function downloadComposedPDF() {
+  const to   = document.getElementById('name-to').value.trim();
+  const from = document.getElementById('name-from').value.trim();
+  const body = document.getElementById('letter-body').value.trim();
+  const date = new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+  downloadPNG({ recipient:to, sender:from, body, stamp:selectedStamp, letter_date:date },
+    `cici-letter-to-${(to||'friend').replace(/\s+/g,'-')}.png`);
+}
+
+// ══════════════════════════════════════════════════════════
+// CONFETTI
+// ══════════════════════════════════════════════════════════
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx2   = canvas.getContext('2d');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const colors = ['#FF1493','#FF69B4','#FFB6D9','#FFE4F0','#FFD700'];
+  const pieces = Array.from({ length: 90 }, () => ({
+    x: Math.random()*canvas.width, y: -20,
+    r: 4+Math.random()*6,
+    color: colors[Math.floor(Math.random()*colors.length)],
+    vx: (Math.random()-0.5)*4, vy: 2+Math.random()*4,
+    alpha: 1, shape: Math.random()>0.5?'circle':'rect',
+    rot: Math.random()*Math.PI*2, rotV: (Math.random()-0.5)*0.2
+  }));
+  let frame;
+  (function draw() {
+    ctx2.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p => {
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.1; p.rot+=p.rotV; p.alpha-=0.007;
+      ctx2.save(); ctx2.globalAlpha=Math.max(0,p.alpha); ctx2.fillStyle=p.color;
+      ctx2.translate(p.x,p.y); ctx2.rotate(p.rot);
+      if (p.shape==='circle') { ctx2.beginPath(); ctx2.arc(0,0,p.r,0,Math.PI*2); ctx2.fill(); }
+      else ctx2.fillRect(-p.r,-p.r/2,p.r*2,p.r);
+      ctx2.restore();
+    });
+    if (pieces.some(p=>p.alpha>0)) frame = requestAnimationFrame(draw);
+    else { ctx2.clearRect(0,0,canvas.width,canvas.height); cancelAnimationFrame(frame); }
+  })();
+}
+
+// ══════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ══════════════════════════════════════════════════════════
+// INIT — route on ?id= or show compose
+// ══════════════════════════════════════════════════════════
+(async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const id     = params.get('id');
+
+  if (id) {
+    document.getElementById('loading-text').textContent = 'Opening your letter... 💌';
+    showScreen('screen-loading');
+    try {
+      letterData = await fetchLetter(id);
+      loadReceiveScreen();
+      showScreen('screen-receive');
+    } catch(err) {
+      console.error(err);
+      showScreen('screen-error');
+    }
+  } else {
+    showScreen('screen-compose');
+    showStep(1);
+  }
+})();
+</script>
+</body>
+</html>
