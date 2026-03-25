@@ -440,7 +440,7 @@
 <main>
 
   <!-- LOADING -->
-  <div class="screen active" id="screen-loading">
+  <div class="screen" id="screen-loading">
     <div style="display:flex;flex-direction:column;align-items:center;gap:18px;min-height:60vh;justify-content:center;">
       <div class="loading-heart">💌</div>
       <div class="loading-text" id="loading-text">Loading...</div>
@@ -1217,6 +1217,7 @@ function showToast(msg) {
   const id     = params.get('id');
 
   if (id) {
+    // Only show loading when we actually need to fetch a letter
     document.getElementById('loading-text').textContent = 'Opening your letter... 💌';
     showScreen('screen-loading');
     try {
@@ -1228,6 +1229,7 @@ function showToast(msg) {
       showScreen('screen-error');
     }
   } else {
+    // No letter ID — go straight to compose, no loading screen
     showScreen('screen-compose');
     showStep(1);
   }
