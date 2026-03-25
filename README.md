@@ -64,9 +64,9 @@ create policy "Anyone can read a letter by ID"
 Open `index.html` and find these three lines near the top of the `<script>` block:
 
 ```js
-const SUPABASE_URL = 'https://izfdodjvyqiptpllwnjp.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_ysgbkJ8BTi9wVwXahsMISA_alRVhQ-J';
-const SITE_URL     = 'https://abbel-dawit.github.io/Cici';
+const SUPABASE_URL = '';
+const SUPABASE_KEY = '';
+const SITE_URL     = '';
 ```
 
 Replace `YOUR_GITHUB_USERNAME` and `YOUR_REPO_NAME` with your actual values.  
